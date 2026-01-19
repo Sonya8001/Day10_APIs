@@ -14,19 +14,16 @@ app.get("/api/messages", (req, res) => {
     res.json(dataStore);
 });
 
-// Get one message by index (for edit pre-fill)  // FIXED
 app.get("/api/messages/:id", (req, res) => {
-    const id = Number(req.params.id); // FIXED
+    const id = Number(req.params.id);
     if (!Number.isInteger(id) || id < 0 || id >= dataStore.length) {
-        return res.status(404).send({ message: "Message not found" }); // FIXED
+        return res.status(404).send({ message: "Message not found" });
     }
-    res.json(dataStore[id]); // FIXED
+    res.json(dataStore[id]);
 });
 
 app.post("/api/messages", (req, res) => {
     const { name, message } = req.body || {};
-
-    console.log("sending message");
 
     if (!name || !message) {
         return res.status(400).send({ message: "Missing name or message" });
@@ -36,31 +33,29 @@ app.post("/api/messages", (req, res) => {
     res.status(201).send({ message: "Received!" });
 });
 
-// Update existing message by index (PUT) // FIXED
 app.put("/api/messages/:id", (req, res) => {
-    const id = Number(req.params.id); // FIXED
+    const id = Number(req.params.id);
     const { name, message } = req.body || {};
 
     if (!Number.isInteger(id) || id < 0 || id >= dataStore.length) {
-        return res.status(404).send({ message: "Message not found" }); // FIXED
+        return res.status(404).send({ message: "Message not found" });
     }
     if (!name || !message) {
-        return res.status(400).send({ message: "Missing name or message" }); // FIXED
+        return res.status(400).send({ message: "Missing name or message" });
     }
 
-    dataStore[id] = { name, message }; // FIXED
-    res.send({ message: "Updated!" }); // FIXED
+    dataStore[id] = { name, message };
+    res.send({ message: "Updated!" });
 });
 
-// Delete message by index (DELETE) // FIXED
 app.delete("/api/messages/:id", (req, res) => {
-    const id = Number(req.params.id); // FIXED
+    const id = Number(req.params.id);
     if (!Number.isInteger(id) || id < 0 || id >= dataStore.length) {
-        return res.status(404).send({ message: "Message not found" }); // FIXED
+        return res.status(404).send({ message: "Message not found" });
     }
 
-    dataStore.splice(id, 1); // FIXED
-    res.send({ message: "Deleted!" }); // FIXED
+    dataStore.splice(id, 1);
+    res.send({ message: "Deleted!" });
 });
 
 app.listen(PORT, () => console.log(`Server: http://localhost:${PORT}`));
