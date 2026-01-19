@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Add Message</title>
+    </head>
+    <body>
+        <h1 id="pageTitle">Add a Message</h1>
+        <p><a href="index.html"> Back to Table</a></p>
+
+        <form id="messageForm">
+            <label>Name:</label><br />
+            <input type="text" id="userName" required /><br /><br />
+
+            <label>Message:</label><br />
+            <textarea id="userMessage" required></textarea><br /><br />
+            <button type="submit" id="submitBtn">Send to API</button>
+        </form>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+
+            async function prefillIfEditing() {
+                if (id === null) return;
+
+                document.getElementById("pageTitle").textContent =
+                    "Edit Message";
+                document.getElementById("submitBtn").textContent =
+                    "Save Changes";
+
+                const response = await fetch(`/api/messages/${id}`);
+                if (!response.ok) {
+                    alert("Message not found.");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                const item = await response.json();
+                document.getElementById("userName").value = item.name;
+                document.getElementById("userMessage").value = item.message;
+            }
+
+            prefillIfEditing();
+
+            document
+                .getElementById("messageForm")
+                .addEventListener("submit", async (event) => {
+                    event.preventDefault();
+
+                    const dataToSend = {
+                        name: document.getElementById("userName").value,
+                        message: document.getElementById("userMessage").value,
+                    };
+
+                    const isEditing = id !== null;
+
+                    const response = await fetch(
+                        isEditing ? `/api/messages/${id}` : "/api/messages",
+                        {
+                            method: isEditing ? "PUT" : "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(dataToSend),
+                        },
+                    );
+
+                    if (response.ok) {
+                        window.location.href = "index.html";
+                    } else {
+                        const err = await response.json().catch(() => null);
+                        alert(err?.message ?? "Something went wrong!");
+                    }
+                });
+        </script>
+    </body>
+</html>
