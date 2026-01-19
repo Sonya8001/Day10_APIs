@@ -10,7 +10,6 @@ app.use(express.static("public"));
 let dataStore = [{ name: "Teacher", message: "API is live!" }];
 
 app.get("/api/messages", (req, res) => {
-    console.log("datastore: " + dataStore);
     res.json(dataStore);
 });
 
